@@ -24,34 +24,36 @@ app.config['SESSION_REDIS'] = redis
 
 Session(app)
 
-#home
 @app.route("/", methods=["GET", "POST"])
 def timeline():
-    form = PostForm()
 
+	form = PostForm()
 
-    user = session.get('profile')
+	user = session.get('profile')
+	
+	if not user:
+		return redirect(url_for('login'))
 
-    if not user:
-        return redirect(url_for('login'))
-    
+	if form.validate_on_submit():
+		post = {
+			'descripcion': form.descripcion.data,
+			'user_id': user['_id']			
+		}
 
-    if form.validate_on_submit():
-        post = {
-                'descripcion': form.descripcion.data,
-                'user_id': user['_id']
-        }
-        mongodb.posts.insert_one(post)
-        return redirect(url_for("timeline"))
+		mongodb.posts.insert_one(post)
+		#return str(post)
+		return redirect(url_for("timeline"))
 
-    posts = list(mongodb.posts.find())
+	#mongodb.users.find_one({ '_id': post['user_id'] })
 
-    for post in posts:
-        post['user'] = mongodb.users.find_one({'_id' : post['user_id']})
-        
+	#consultar los datos de las publicaciones 
+	posts = list(mongodb.posts.find())
+	
+	for post in posts:
+		post['user'] = mongodb.users.find_one({'_id': post['user_id']})
+	
 
-    return render_template("home.html", user=user, form=form, posts=posts)
-
+	return render_template('home.html', user=user, form=form, posts=posts)
 
 
 @app.route("/signup", methods=["GET", "POST"])
@@ -108,3 +110,5 @@ def logout():
 
 if __name__ == '__main__':
     app.run(host='0.0.0.0', port=5090, debug=True)
+
+

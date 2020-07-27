@@ -18,7 +18,17 @@
 							<button type="submit" class=" btn btn-primary">Enviar</button>
 						</form>
 						<!--Imprimir los comentarios-->						
-						{{ posts }}
+						<!--{{ posts }}-->
+						<div>
+							{% for post in posts %}
+								<div class="card mt-4" style="width: 100">
+									<div class="card-body">
+										<h5 class="card-title">{{ post.user.name }}</h5>
+										<p class="card-text">{{ post.descripcion }}</p>
+									</div>
+								</div>
+							{% endfor %}
+						</div>
 					</div>
 				</div>
 				<div class="col-4">
