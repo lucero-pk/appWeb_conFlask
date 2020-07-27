@@ -24,31 +24,35 @@ app.config['SESSION_REDIS'] = redis
 
 Session(app)
 
+#home
 @app.route("/", methods=["GET", "POST"])
 def timeline():
+    form = PostForm()
 
-	form = PostForm()
-	if form.validate_on_submit():
-		post = {
-			'descripcion': form.descripcion.data
-			'user_id': user['_id']
-		}
 
-		mongodb.posts.insert_one(post)
-		return str(post)
+    user = session.get('profile')
 
-	#consultar los datos de las publicaciones 
-	posts = list(mongodb.posts.find())
-	
-	#print(posts)
-	#for post in posts:
-		#post['user'] = mongodb.users.find_one({'_id': post['user_id']})
+    if not user:
+        return redirect(url_for('login'))
+    
 
-	user = session.get('profile')
-	if not user:
-		return redirect(url_for('login'))
+    if form.validate_on_submit():
+        post = {
+                'descripcion': form.descripcion.data,
+                'user_id': user['_id']
+        }
+        mongodb.posts.insert_one(post)
+        return redirect(url_for("timeline"))
 
-	return render_template('home.html', user=user, form=form, posts=posts)
+    posts = list(mongodb.posts.find())
+
+    for post in posts:
+        post['user'] = mongodb.users.find_one({'_id' : post['user_id']})
+        
+
+    return render_template("home.html", user=user, form=form, posts=posts)
+
+
 
 @app.route("/signup", methods=["GET", "POST"])
 def signup():
