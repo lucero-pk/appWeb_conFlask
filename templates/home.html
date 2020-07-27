@@ -3,12 +3,40 @@
     <title>Web test</title>
 {% endblock %}
 {% block body %}
-    <div class="row mt-5 justify-content-center">
-        <div class="col-lg">
-            <center>
-               <img src="{{ request.host_url }}/img/duck.gif" alt="">
-               <h1 class="mt-5">Welcome!</h1>
-            </center>
-        </div>
-    </div>
+	<div clas="container">
+		<div class="row">
+			<div class="col-8">
+				<!--<div class="row mt-5 justify-content-center">-->
+					<div class="col-lg mt-5">
+						<form class="form" action="{{ url_for('timeline') }}" method="POST">
+							{{ form.csrf_token }}
+							<div class="form-group">
+								<!--{{ form.descripcion.label }}-->
+								<h1 class="mt-5">Deja tu comentario</h1>
+								{{ form.descripcion(class="form-control", placeholder="¿Qué piensas?")}}
+							</div>
+							<button type="submit" class=" btn btn-primary">Enviar</button>
+						</form>
+						<!--Imprimir los comentarios-->						
+						{{ posts }}
+					</div>
+				</div>
+				<div class="col-4">
+					<!--<div class="row mt-5 justify-content-center">-->
+						<div class="col-lg mt-5">
+							<div class="card" style="width: 18rem;">
+								<div class="card-body">
+									<h1 class="card-title">{{ user.name }}!</h1>
+									<p class="card-text">{{ user.descripcion }}</p>
+									<p class="card-text">{{ user.correo_electronico }}</p>
+									<p class="card-text">{{ user.numeroTel }}</p>
+									<a href="#" class="card-link">Logout</a>
+								</div>
+							</div>
+						</div>
+					</div>
+				</div>
+			</div>
+		</div>
+	</div>
 {% endblock %}
